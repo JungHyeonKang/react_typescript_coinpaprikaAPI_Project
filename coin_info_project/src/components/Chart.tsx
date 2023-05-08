@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchCoinHistroy } from "../api";
 import ApexCharts from "react-apexcharts";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 
 interface ChartProps{
@@ -21,7 +23,7 @@ market_cap:number
 function Chart(){
     const {coinId}=useOutletContext<ChartProps>()
     const {isLoading,data} = useQuery<IHistorycalData[]>(["coinHistory",coinId],()=>fetchCoinHistroy(coinId))
-    
+    const isDark=useRecoilValue(isDarkAtom)
     
     return <div>{isLoading ? "Loading chart":<ApexCharts type="line"
      series={[
@@ -42,7 +44,7 @@ function Chart(){
         },
         grid:{show:false},
         theme:{
-            mode :  "dark" || 'light' 
+            mode :isDark? "dark" : 'light' 
         },
         stroke:{
             curve : "smooth",

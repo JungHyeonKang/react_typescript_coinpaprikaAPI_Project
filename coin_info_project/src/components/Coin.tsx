@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useLocation, useMatch, useParams } from "react-router-dom";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import styled from "styled-components";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Tabs = styled.div`
   display: grid;    
@@ -65,7 +67,19 @@ const Title = styled.div`
 font-size: 48px;
     color: ${props=>props.theme.accentColor};
 `
-
+const Button = styled.button<{ isDark: boolean }>`
+  background-color: ${props=>props.isDark ? "white" : "black"}; /* Green */
+  border: none;
+  color: ${props => props.theme.bgColor};
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+`;
 
 interface ILocation {
     state:{
@@ -161,10 +175,18 @@ function Coin(){
     const chartMatch = useMatch("/:coinId/chart")
     
     const loading = infoLoading || tickerLoading;
+    const setDarkAtom=useSetRecoilState(isDarkAtom)
+
+    const isDark=useRecoilValue(isDarkAtom)
+
+    const toggleDarkAtom = () => setDarkAtom((prev)=>!prev);
     return (
         <Container>
             <Header>
-                <Title>{state?.name ? state.name : loading ? "LOADING" : infoData?.name}</Title>
+                <Title>
+                    {state?.name ? state.name : loading ? "LOADING" : infoData?.name}
+                    <Button isDark={isDark} onClick={()=>toggleDarkAtom()}>{isDark ? "Light mode" : "Dark mode"}</Button>
+                </Title>
             </Header>
             {loading ? <Loader>LOADING</Loader>
             : (
