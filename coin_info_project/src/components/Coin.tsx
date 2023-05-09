@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, Outlet, useLocation, useMatch, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from "react-router-dom";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -79,6 +79,26 @@ const Button = styled.button<{ isDark: boolean }>`
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+`;
+
+const BackButton = styled.button`
+  float: left;
+  background-color: #fff; /* White */
+  border: none;
+  color: #333; /* Dark gray */
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #f2f2f2; /* Light gray */
+  }
 `;
 
 interface ILocation {
@@ -180,8 +200,13 @@ function Coin(){
     const isDark=useRecoilValue(isDarkAtom)
 
     const toggleDarkAtom = () => setDarkAtom((prev)=>!prev);
+
+    const navigate = useNavigate()
+    const goToBack = () => navigate(-1)
     return (
         <Container>
+            <BackButton><Link to={"/"}>Home</Link></BackButton>
+            <BackButton onClick={goToBack}>Back</BackButton>
             <Header>
                 <Title>
                     {state?.name ? state.name : loading ? "LOADING" : infoData?.name}
